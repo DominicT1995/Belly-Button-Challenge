@@ -28,6 +28,7 @@ function init() {
         let firstSubject = names[0];
 
         createBarchart(firstSubject);
+        createBubblechart(firstSubject);
 
     });
 }
@@ -63,12 +64,45 @@ function createBarchart(subject) {
     });
 }
 
+function createBubblechart(subject) {
+
+    samplesData.then(function(data) {
+
+        let samples = data.samples;
+
+        let sampleCurrent = samples.filter(sample => sample.id == subject);
+
+        let sampleValues = sampleCurrent[0].sample_values;
+        let otuIds = sampleCurrent[0].otu_ids;
+        let otuLabels = sampleCurrent[0].otu_labels;
+
+        let trace1 = {
+            x: otuIds,
+            y: sampleValues,
+            mode: 'markers',
+            text: otuLabels,
+            marker: {
+                color: otuIds,
+                colorscale: 'Earth',
+                size: sampleValues,
+                sizeref: 1.4
+            }
+        };
+
+        let bubblechartData = [trace1];
+
+        Plotly.newPlot("bubble", bubblechartData);
+
+    });
+}
+
 //Dropdown change function
 function optionChanged(subject) {
 
     console.log("Showing results for Subject ID No.", subject);
 
     createBarchart(subject);
+    createBubblechart(subject);
 
 }
 
