@@ -6,12 +6,7 @@ function init() {
 
     samplesData.then(function(data) {
 
-        let test = data.samples;
-        let test2 = test.filter(sample => sample.id == 940);
-        console.log(test2[0].sample_values)
-
         //LIST POPULATION/////////////////////////
-        //console.log(data.names);
 
         let dropDownMenu = d3.select("#selDataset");
 
@@ -22,14 +17,24 @@ function init() {
             dropDownMenu.append("option").text(names[i]).property("value", names[i]);
         }
 
-        //console.log(d3.select("option").text());
-        //console.log(d3.select("option").attr('value'));
-
         let firstSubject = names[0];
 
         createBarchart(firstSubject);
         createBubblechart(firstSubject);
 
+        let metadata = data.metadata;
+
+        let sampleCurrent = metadata.filter(sample => sample.id == firstSubject);
+
+        let metaArray = Object.entries(sampleCurrent[0]);
+
+        let cardDemo = d3.select("#sample-metadata");
+
+        for (let i = 0; i < metaArray.length; i++) {
+
+            cardDemo.append("h6").text(`${metaArray[i][0]}: ${metaArray[i][1]}`).attr("id", `row${i}`);
+
+        }
     });
 }
 
@@ -96,6 +101,26 @@ function createBubblechart(subject) {
     });
 }
 
+function createMetadata(subject) {
+
+    samplesData.then(function(data) {
+
+        let metadata = data.metadata;
+
+        let sampleCurrent = metadata.filter(sample => sample.id == subject);
+
+        let metaArray = Object.entries(sampleCurrent[0]);
+
+        let cardDemo = d3.select("#sample-metadata");
+
+        for (let i = 0; i < metaArray.length; i++) {
+
+            cardDemo.select(`#row${i}`).text(`${metaArray[i][0]}: ${metaArray[i][1]}`);
+
+        }
+    });
+}
+
 //Dropdown change function
 function optionChanged(subject) {
 
@@ -103,6 +128,7 @@ function optionChanged(subject) {
 
     createBarchart(subject);
     createBubblechart(subject);
+    createMetadata(subject);
 
 }
 
